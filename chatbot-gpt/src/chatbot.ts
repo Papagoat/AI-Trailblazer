@@ -1,10 +1,15 @@
-import express, { Request, Response } from "express";
+import cors from "cors";
+import express, { NextFunction, Request, Response } from "express";
 import { getGoogleProjectId } from "./google-helper-file";
 
 import { GoogleVertexAI } from "langchain/llms/googlevertexai";
 
 const app = express();
-
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,7 +33,7 @@ app.post("/api/message", async (req: Request, res: Response) => {
 
   if (!userMessage) {
     res.send("Empty message");
-    return
+    return;
   }
 
   try {
@@ -40,7 +45,7 @@ app.post("/api/message", async (req: Request, res: Response) => {
   }
 });
 
-app.use((err: Error, _: Request, res: Response) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).send(err);
 });
 

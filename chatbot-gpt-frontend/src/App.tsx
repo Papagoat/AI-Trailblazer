@@ -36,7 +36,7 @@ const App = () => {
     setIsLoading(true); // Start loading
 
     try {
-      const response = await axios.post("/api/message", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/message`, {
         message: buttonMessage,
       });
       const botMessage = {
@@ -69,7 +69,7 @@ const App = () => {
     setIsLoading(true); // Start loading
 
     try {
-      const response = await axios.post("/api/message", { message: input });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/message`, { message: input });
       const botMessage = {
         text: response.data,
         sender: "bot",
