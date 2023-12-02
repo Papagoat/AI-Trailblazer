@@ -17,7 +17,7 @@ const App = () => {
     },
     {
       label: "I need financial assistance.",
-      message: "I need financial support.",
+      message: "I need financial assistance.",
     },
     {
       label: "I'm looking to get assistive technology.",
