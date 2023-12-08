@@ -1,4 +1,4 @@
-# GCloud Setup
+# GCloud CLI Setup
 
 ### 1. Install binaries
 
@@ -25,3 +25,8 @@
 1. `make help`
 
 2. Run the commands (ie. `make gbuild-app`)
+
+# APP / API
+1. Install packages : `yarn`
+
+2. Start APP / API  : `yarn start`
