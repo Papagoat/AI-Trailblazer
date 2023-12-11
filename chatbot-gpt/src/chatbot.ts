@@ -1,14 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
-import { QASystem } from "./retrieval/QASystem";
 import { initRetriever } from "./retrieval/retriever";
 import cors from "cors";
+import { ConversationalRetrievalQA } from "./retrieval/ConversationalRetrievalQA";
 
 const app = express();
 
 initRetriever()
   .then((retriever) => {
-    new QASystem(retriever);
-
     app.use(
       cors({
         origin: process.env.FRONTEND_ORIGIN,
@@ -20,17 +18,17 @@ initRetriever()
     app.post("/api/message", async (req: Request, res: Response) => {
       try {
         const message = req.body.message ?? "";
-        const fullChain = QASystem.fullChain;
-        const result = await fullChain.invoke({ question: message });
+        const chain = ConversationalRetrievalQA.getInstance(retriever);
+        const result = await chain.getMessage(message);
         res.send(result);
       } catch (error) {
-        console.error(error)
+        console.error(error);
         res.send(error);
       }
     });
 
     app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-      console.error(err)
+      console.error(err);
       res.status(500).send(err);
     });
 
