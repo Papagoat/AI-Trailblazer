@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google-cloud/aiplatform": "^3.9.0",
     "@google-cloud/storage": "^7.6.0",
     "@types/cors": "^2.8.17",
     "axios": "^1.6.1",
