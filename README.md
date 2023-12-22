@@ -20,13 +20,18 @@
 
 # MakeFile (Build / Push / Deploy Images)
 
-1. Navigate to Root Dir
 
-1. `make help`
+| Step                        | Command                             |
+|-----------------------------|-------------------------------------|
+| 1. Navigate to Root Dir     |                                     |
+| 2. List available cmds      | `make help`                         |
+| 3. Run the cmds             | (ie. `make gbuild-app`)             |
 
-2. Run the commands (ie. `make gbuild-app`)
 
 # APP / API
-1. Install packages : `yarn`
 
-2. Start APP / API  : `yarn start`
+| Step | Command                                      | Description                                      |
+|------|----------------------------------------------|--------------------------------------------------|
+| 1    | `yarn`                                       | Install packages                                 |
+| 2    | `yarn start`                                 | Start APP                                        |
+| 3    | `uvicorn app.main:app --reload --port 3001`  | Start API                                        |
