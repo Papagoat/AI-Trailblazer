@@ -11,14 +11,8 @@
 # TODO:
 1. [✅] Rewrite chat-gpt (JS) int chat-gpt-py (python)
 2. [✅] Add in Memory 
-3. [🚧] Add in Production ready servers
-4. [  ] Dockerise
-5. [  ] Push to GCP and test
-
-# Notes
-
-### S1. Production Ready Servers
-1. Gunicorn
-2. Hypercorn
-
-> `gunicorn -k uvicorn.workers.UvicornWorker -w 4 --bind 0.0.0.0:5000 main:app`
+3. [✅] Add in Production ready servers
+4. [✅] Dockerise
+5. [✅] Push to GCP and test
+6. [  ] Add in Memory backed vector store
+7. [  ] Create Jupyter Playbook for UXDs to play around with prompts
