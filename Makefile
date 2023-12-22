@@ -18,7 +18,7 @@ gdeploy-app:
 	gcloud run deploy app --allow-unauthenticated --image $(REGION)-docker.pkg.dev/$(PROJECTID)/app/app:latest
 
 gbuild-api:
-	gcloud builds submit --region=$(REGION) --tag $(REGION)-docker.pkg.dev/$(PROJECTID)/api/api ./chatbot-gpt
+	gcloud builds submit --region=$(REGION) --tag $(REGION)-docker.pkg.dev/$(PROJECTID)/api/api ./chatbot-gpt-py
 
 gdeploy-api:
 	gcloud run deploy api --allow-unauthenticated --image $(REGION)-docker.pkg.dev/$(PROJECTID)/api/api:latest
