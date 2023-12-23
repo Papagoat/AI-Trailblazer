@@ -1,9 +1,14 @@
 import os
+import faiss
 
 from langchain.embeddings import VertexAIEmbeddings
 from langchain.vectorstores.matching_engine import MatchingEngine
+from langchain.docstore import InMemoryDocstore
+from langchain.vectorstores import FAISS
+from langchain.memory import VectorStoreRetrieverMemory
 
-def getRetriever():
+
+def get_vector_search_retriever():
     """
     This method returns a retriever using vector search (ie. Matching Engine)
     """
@@ -24,7 +29,7 @@ def getRetriever():
         endpoint_id=ME_ENDPOINT_ID,
     )
 
-    NUMBER_OF_RESULTS = 10
+    NUMBER_OF_RESULTS = 4
 
     # Expose index to the retriever
     # https://api.python.langchain.com/en/latest/vectorstores/langchain_community.vectorstores.matching_engine.MatchingEngine.html?highlight=matchingengine#langchain_community.vectorstores.matching_engine.MatchingEngine.as_retriever
@@ -36,3 +41,25 @@ def getRetriever():
     )
 
     return retriever
+
+
+def get_memory_retriever():
+    """
+    This method returns a vector store retriever that retrieves stored memories
+    """
+    EMBEDDING_SIZE = 768
+    index = faiss.IndexFlatL2(EMBEDDING_SIZE)
+    embedding_fn = VertexAIEmbeddings()
+
+    # pylint: disable-next=not-callable
+    vectorstore_memory = FAISS(embedding_fn, index, InMemoryDocstore({}), {})
+
+    retriever = vectorstore_memory.as_retriever(search_kwargs={"k": 2})
+    memory = VectorStoreRetrieverMemory(
+        retriever=retriever,
+        return_messages=True,
+        input_key="human",
+        output_key="ai"
+    )
+
+    return memory
