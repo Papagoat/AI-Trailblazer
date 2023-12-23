@@ -20,10 +20,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-print(os.getenv('FRONTEND_ORIGIN'))
-
-print(f"FRONTEND {os.getenv('FRONTEND_ORIGIN')}")
-
 @app.get("/")
 async def root():
     return "hello"
@@ -36,10 +32,10 @@ async def handleMessage(query: UserQuery):
     try:
         query = query.message
         response = chain.chain.invoke({"question": query})
-        
         return response["answer"]
     except Exception as e:
         print(f"[Error] {e}")
+        raise e
 
 if __name__ == "__main__":
     uvicorn.run(app, port=3001)
