@@ -14,5 +14,6 @@
 3. [✅] Add in Production ready servers
 4. [✅] Dockerise
 5. [✅] Push to GCP and test
-6. [  ] Add in Memory backed vector store
-7. [  ] Create Jupyter Playbook for UXDs to play around with prompts
+6. [✅] Add in Memory backed vector store
+7. [✅] Create Jupyter Playbook for UXDs to play around with prompts
+8. [  ] See how to handle eligibility criteria tracking
