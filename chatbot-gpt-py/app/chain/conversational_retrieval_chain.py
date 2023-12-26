@@ -2,12 +2,16 @@ from operator import itemgetter
 from threading import Lock
 
 from langchain.llms import VertexAI
-from langchain.prompts import ChatPromptTemplate, PromptTemplate
+from langchain.prompts import ChatPromptTemplate, PromptTemplate, FewShotChatMessagePromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnableParallel
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 from app.retriever.retriever import get_vector_search_retriever, get_memory_retriever
 from app.helpers import combine_documents
+from app.prompt_templates.main_templates import STANDALONE_TEMPLATE, ANSWER_TEMPLATE
+from app.prompt_templates.system_template import SYSTEM_TEMPLATE
+from app.prompt_templates.few_shot_templates import examples
+from app.utilities.debug import debug_fn
 
 
 class SingletonMeta(type):
@@ -66,41 +70,32 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
             "chat_history": lambda x: self.memory.load_memory_variables({ "human": x["question"] })["history"]
         })
 
-        standalone_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
-        
-        Please answer in the same language as the incoming question.
-
-        Relevant pieces of previous conversation:
-        {chat_history}
-
-        (You do not need to use these pieces of information if not relevant)
-
-        Follow Up Input: {question}
-        Standalone question:"""
         CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(
-            standalone_template)
+            STANDALONE_TEMPLATE)
 
         # RAG answer synthesis prompt
-        answer_template = """Try to answer the question based on the following context:
-        {context}
-
-        Question: {question}
-
-        If the context is not relevant to the question, answer based on your own knowledge.
-
-        Do not say that you cannot answer this question. Instead, either:
-        1. Create a standalone question to ask the human on what he means.
-        2. Inform the human to rephrase his question to be more specific.
-        """
-        ANSWER_PROMPT = ChatPromptTemplate.from_template(answer_template)
+        ANSWER_PROMPT = ChatPromptTemplate.from_messages([
+                ("system", SYSTEM_TEMPLATE),
+                ("system", ANSWER_TEMPLATE)
+            ])
+        
+        EXAMPLE_PROMPT = ChatPromptTemplate.from_messages([
+            ("human", "{human}"), ("ai", "{ai}")
+        ])
+        # Test Few Shot integration into standalone question
+        FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
+            examples=examples,
+            example_prompt=EXAMPLE_PROMPT,
+        ).format()
 
         # get standalone question
         standalone_question = {
-            "standalone_question": {
-                "question": lambda x: x["question"],
-                "chat_history": lambda x: x["chat_history"],
-            }
+            "standalone_question": RunnablePassthrough.assign(
+                examples=lambda _: FEW_SHOT_PROMPT
+            )
+            | debug_fn
             | CONDENSE_QUESTION_PROMPT
+            | debug_fn
             | self.model
             | StrOutputParser(),
         }
@@ -121,7 +116,7 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
         answer = {
             "question": lambda x: x["question"],
             # pylint: disable-next=not-callable
-            "answer": final_inputs | ANSWER_PROMPT | self.model,
+            "answer": final_inputs | ANSWER_PROMPT | debug_fn | self.model,
             "docs": itemgetter("docs"),
         }
 
@@ -129,7 +124,6 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
             "answer": lambda x: x["answer"],
             "_": lambda x: self.save_to_memory(x["question"], x["answer"])
         })
-
 
         final_chain = loaded_memory | standalone_question | retrieved_documents | answer | updateMemory
 

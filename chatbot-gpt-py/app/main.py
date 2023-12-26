@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.typings import UserQuery
-from app.chain.ConversationalRetrievalChain import ConversationalRetrievalChain
+from app.chain.conversational_retrieval_chain import ConversationalRetrievalChain
 
 load_dotenv()
 
