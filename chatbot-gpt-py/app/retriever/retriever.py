@@ -18,7 +18,7 @@ def get_vector_search_retriever():
     ME_INDEX_ID = os.getenv('ME_INDEX_ID')
     ME_ENDPOINT_ID = os.getenv('ME_ENDPOINT_ID')
 
-    embeddings = VertexAIEmbeddings(location=REGION)
+    embeddings = VertexAIEmbeddings(location=REGION, model_name="textembedding-gecko@001")
 
     me = MatchingEngine.from_components(
         project_id=PROJECT_ID,
@@ -49,7 +49,7 @@ def get_memory_retriever():
     """
     EMBEDDING_SIZE = 768
     index = faiss.IndexFlatL2(EMBEDDING_SIZE)
-    embedding_fn = VertexAIEmbeddings()
+    embedding_fn = VertexAIEmbeddings(model_name="textembedding-gecko@001")
 
     # pylint: disable-next=not-callable
     vectorstore_memory = FAISS(embedding_fn, index, InMemoryDocstore({}), {})

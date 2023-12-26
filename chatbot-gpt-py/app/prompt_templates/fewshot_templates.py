@@ -1,5 +1,5 @@
 # Should be the examples to guide the crafting of standalone quesitons
-examples = [
+fewshot_examples = [
     {"human": "My grandma just had an accident and I don't know what to do.",
      "ai": "I'm really sorry to hear about your grandma's accident. I'm here to help. Could you please provide more details about the situation? What happened, and what kind of assistance or information are you looking for? I'll do my best to support you."},
     {"human": "What kind of help can I get when my parents are getting old?",

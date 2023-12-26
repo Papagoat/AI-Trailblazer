@@ -7,11 +7,10 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 from app.retriever.retriever import get_vector_search_retriever, get_memory_retriever
+from app.retriever.example_selector import get_fewshot_example_selector
 from app.helpers import combine_documents
 from app.prompt_templates.main_templates import STANDALONE_TEMPLATE, ANSWER_TEMPLATE
 from app.prompt_templates.system_template import SYSTEM_TEMPLATE
-from app.prompt_templates.few_shot_templates import examples
-from app.utilities.debug import debug_fn
 
 
 class SingletonMeta(type):
@@ -78,24 +77,22 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
                 ("system", SYSTEM_TEMPLATE),
                 ("system", ANSWER_TEMPLATE)
             ])
-        
-        EXAMPLE_PROMPT = ChatPromptTemplate.from_messages([
+
+        FEWSHOT_EXAMPLE_PROMPT = ChatPromptTemplate.from_messages([
             ("human", "{human}"), ("ai", "{ai}")
         ])
-        # Test Few Shot integration into standalone question
-        FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
-            examples=examples,
-            example_prompt=EXAMPLE_PROMPT,
-        ).format()
+
+        FEWSHOT_PROMPT = FewShotChatMessagePromptTemplate(
+            example_prompt=FEWSHOT_EXAMPLE_PROMPT,
+            example_selector=get_fewshot_example_selector()
+        )
 
         # get standalone question
         standalone_question = {
             "standalone_question": RunnablePassthrough.assign(
-                examples=lambda _: FEW_SHOT_PROMPT
+                examples=lambda x: FEWSHOT_PROMPT.format(human=x["question"])
             )
-            | debug_fn
             | CONDENSE_QUESTION_PROMPT
-            | debug_fn
             | self.model
             | StrOutputParser(),
         }
@@ -116,7 +113,7 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
         answer = {
             "question": lambda x: x["question"],
             # pylint: disable-next=not-callable
-            "answer": final_inputs | ANSWER_PROMPT | debug_fn | self.model,
+            "answer": final_inputs | ANSWER_PROMPT | self.model,
             "docs": itemgetter("docs"),
         }
 
