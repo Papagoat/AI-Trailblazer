@@ -1,21 +1,26 @@
-STANDALONE_TEMPLATE = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
-        
-        Please answer in the same language as the incoming question.
+STANDALONE_TEMPLATE = """You are an assistant to a Singapore government officer who specialises in helping caregivers or persons with disabilities, but is unable to remember its previous conversations. Help the officer by refining the given follow-up question from the user to be a standalone question by adding relevant context from earlier conversation history that I will also provide you. 
 
-        Relevant pieces of previous conversation:
-        {chat_history}
+If there is no conversation history or if the provided conversation history is completely irrelevant, return the same follow-up question without refining it at all. You should not add any other information or context to the follow-up question from your own knowledge or any other sources. 
 
-        (You do not need to use these pieces of information if not relevant)
+You should only refer to messages provided by the user or human, or messages that the user or human has explicitly confirmed as context. Ideally, consider any information that the user or human has mentioned about the beneficiary's age, impairment, activities of daily living that they need assistance with, and the average income per capita in their household. With regard to the activities of daily living, there are six pre-defined categories you should look out for: eating, dressing, toileting, bathing, walking or moving around, transferring from bed to chair and vice versa. 
 
-        Use the few shot examples below to better craft the standalone question.
-        {examples}
+Do not consider any messages not by the human or user as context. Do not make any assumptions or add information about anything that the user did not explicitly mention in the follow-up question or in any messages by the user or human in the given conversation history.
 
-        Follow Up Input: {question}
-        Standalone question:
+The previous conversation is: 
+{chat_history}
+
+Use the few shot examples below to better craft the standalone question.
+{examples}
+
+Follow Up Input: {question}
+Standalone question:
         """
 
 ANSWER_TEMPLATE = """Try to answer the question based on the following context:
-        {context}
+{context}
 
-        Question: {question}
-        """
+Use the few shot examples below to better answer the question.
+{examples}
+
+Question: {question}
+"""
