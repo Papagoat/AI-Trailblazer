@@ -9,8 +9,10 @@ Do not consider any messages not by the human or user as context. Do not make an
 The previous conversation is: 
 {chat_history}
 
-Use the few shot examples below to better craft the standalone question.
+The examples are:
 {examples}
+
+These examples are only teaching you how to navigate a conversation around a specific topic. You should not replace the current question topic with the example topic.
 
 Follow Up Input: {question}
 Standalone question:
@@ -19,8 +21,10 @@ Standalone question:
 ANSWER_TEMPLATE = """Try to answer the question based on the following context:
 {context}
 
-Use the few shot examples below to better answer the question.
+The examples are:
 {examples}
+
+These examples are only teaching you how to navigate a conversation around a specific topic. You should not replace the current question topic with the example topic.
 
 Question: {question}
 """

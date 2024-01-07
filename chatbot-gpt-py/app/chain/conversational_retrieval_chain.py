@@ -112,7 +112,7 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
             )
             | CONDENSE_QUESTION_PROMPT
             | self.model
-            | StrOutputParser(),
+            | StrOutputParser()
         }
 
         # Now we retrieve the documents
@@ -138,7 +138,7 @@ class ConversationalRetrievalChain(metaclass=SingletonMeta):
 
         updateMemory = RunnableParallel({
             "answer": lambda x: x["answer"].content,
-            "_": lambda x: self.save_to_memory(x["question"], x["answer"])
+            "_": lambda x: self.save_to_memory(x["question"], x["answer"].content)
         })
 
         final_chain = loaded_memory | standalone_question | retrieved_documents | answer | updateMemory
