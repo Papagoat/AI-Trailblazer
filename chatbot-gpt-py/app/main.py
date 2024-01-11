@@ -6,12 +6,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.typings import UserQuery
-from app.chain.conversational_retrieval_chain import ConversationalRetrievalChain
+from app.chain.composite_chain import CompositeChain
 
 load_dotenv()
+composite_chain = CompositeChain().chain
 
 app = FastAPI()
-chain = ConversationalRetrievalChain()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[os.getenv("FRONTEND_ORIGIN")],
@@ -31,8 +31,8 @@ async def handleMessage(query: UserQuery):
     """
     try:
         query = query.message
-        response = chain.chain.invoke({"question": query})
-        return response["answer"]
+        res = composite_chain.invoke({"question": query})
+        return res
     except Exception as e:
         print(f"[Error] {e}")
         raise e
