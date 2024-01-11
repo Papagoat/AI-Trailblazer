@@ -33,4 +33,8 @@ def debug_fn(x):
           "len": len(prompt_val),
           "prompt_val": prompt_val,
         })
+    else:
+        # Prints input as is
+        pp.pprint(x)
+    
     return x
