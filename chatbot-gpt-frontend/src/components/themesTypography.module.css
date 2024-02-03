@@ -1,0 +1,113 @@
+:root {
+  /* spacing styles */
+  --spacing-l: 32px;
+  --spacing-m: 24px;
+  --spacing-s: 16px;
+  --spacing-xs: 8px;
+  --spacing-xxs: 4px;
+
+  /* header styles */
+  --h1-font: 32px;
+  --h2-font: 24px;
+  --h3-font: 20px;
+
+  /* body font-size styles */
+  --body-font-large: 18px;
+  --body-font-medium: 16px;
+  --body-font-small: 14px;
+
+  /* body font-weight styles */
+  --body-font-weight-bold: 700;
+  --body-font-weight-semibold: 600;
+  --body-font-weight-regular: 400;
+
+  /* border-radius styles */
+  --border-radius-small: 4px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 16px;
+
+  /** colors */
+  --color-grey-100: #2a2a2a;
+  --color-grey-70: #6a6a6a;
+  --color-green-100: #103811;
+
+  --bg-user-input: #C1EDC2;
+}
+
+.text {
+  color: #2a2a2a;
+
+  font-family: Inter;
+  font-style: normal;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+.text-h1 {
+  composes: text;
+  font-size: var(--h1-font);
+}
+
+.text-h2 {
+  composes: text;
+  font-size: var(--h2-font);
+}
+
+.text-h3 {
+  composes: text;
+  font-size: var(--h3-font);
+}
+
+.body-regular-large {
+  composes: text;
+  font-size: var(--body-font-large);
+  font-weight: var(--body-font-weight-regular);
+}
+
+.body-regular-medium {
+  composes: text;
+  font-size: var(--body-font-medium);
+  font-weight: var(--body-font-weight-regular);
+}
+
+.body-regular-small {
+  composes: text;
+  font-size: var(--body-font-small);
+  font-weight: var(--body-font-weight-regular);
+}
+
+.body-semibold-large {
+  composes: text;
+  font-size: var(--body-font-large);
+  font-weight: var(--body-font-weight-semibold);
+}
+
+.body-semibold-medium {
+  composes: text;
+  font-size: var(--body-font-medium);
+  font-weight: var(--body-font-weight-semibold);
+}
+
+.body-semibold-small {
+  composes: text;
+  font-size: var(--body-font-small);
+  font-weight: var(--body-font-weight-semibold);
+}
+
+.body-bold-large {
+  composes: text;
+  font-size: var(--body-font-large);
+  font-weight: var(--body-font-weight-bold);
+}
+
+.body-bold-medium {
+  composes: text;
+  font-size: var(--body-font-medium);
+  font-weight: var(--body-font-weight-bold);
+}
+
+.body-bold-small {
+  composes: text;
+  font-size: var(--body-font-small);
+  font-weight: var(--body-font-weight-bold);
+}
