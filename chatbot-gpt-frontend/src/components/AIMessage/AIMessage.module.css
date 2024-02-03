@@ -1,0 +1,19 @@
+.is-latest {
+   font-weight: 600;
+}
+
+.wrapper {
+  display: flex;
+  gap: var(--spacing-s);
+  height: fit-content;
+
+  p {
+    composes: body-regular-large from "../themesTypography.module.css";
+    line-height: 160%;
+  }
+}
+
+.daisy-logo {
+  width: 24px;
+  height: 24px;
+}

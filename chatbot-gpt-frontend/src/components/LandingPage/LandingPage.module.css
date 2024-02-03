@@ -1,0 +1,21 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  margin: 20px 0;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.context-container {
+  display: grid;
+  grid-column: 1 / 7;
+  grid-template-columns: subgrid;
+  min-width: 500px;
+}
+
+.chat-container {
+  display: grid;
+  grid-column: 7 / -1;
+  grid-template-columns: subgrid;
+  min-width: 500px;
+}

@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  border-radius: var(--border-radius-large);
+  background: white;
+  color: var(--color-grey-70);
+  padding: 20px;
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1),
+    0px 9px 9px 0px rgba(0, 0, 0, 0.09), 0px 20px 12px 0px rgba(0, 0, 0, 0.05),
+    0px 36px 15px 0px rgba(0, 0, 0, 0.01), 0px 57px 16px 0px rgba(0, 0, 0, 0);
+}
+
+.microphone-img {
+  padding: 0 9px;
+}
+
+
+.input {
+  width: 100%;
+  border-radius: var(--border-radius-large);
+  border: none;
+  &:focus {
+    outline: none;
+  }
+}
