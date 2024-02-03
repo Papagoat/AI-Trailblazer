@@ -1,8 +1,9 @@
 import React, { FormEvent, useState } from "react";
 import axios from "axios";
-import "./App.css"; // Ensure you have the corresponding CSS for loader
+import styles from "./AppOriginal.module.css"; // Ensure you have the corresponding CSS for loader
 
-const App = () => {
+/** Keeping this as reference code */
+export const AppOriginal = () => {
   const [messages, setMessages] = useState<{ text: string; sender: string }[]>(
     []
   );
@@ -89,10 +90,10 @@ const App = () => {
   };
 
   return (
-    <div className="chat-container">
+    <div className={styles["chat-container"]}>
       <h2>Hello there, welcome to DAISY</h2>
       <p>How can I help you today?</p>
-      <div className="button-group">
+      <div className={styles["button-group"]}>
         {buttons.map((button, index) => (
           <button
             key={index}
@@ -103,15 +104,15 @@ const App = () => {
           </button>
         ))}
       </div>
-      <div id="chat-window" className="clearfix">
+      <div id="chat-window" className={styles["clearfix"]}>
         {messages.map((m, index) => (
           <div key={index} className={`message ${m.sender}`}>
             {m.text}
           </div>
         ))}
-        {isLoading && <div className="loader"></div>} {/* Loader element */}
+        {isLoading && <div className={styles["loader"]}></div>} {/* Loader element */}
       </div>
-      <form onSubmit={sendMessage} className="query-input">
+      <form onSubmit={sendMessage} className={styles["query-input"]}>
         <input
           type="text"
           value={input}
@@ -127,5 +128,3 @@ const App = () => {
     </div>
   );
 };
-
-export default App;

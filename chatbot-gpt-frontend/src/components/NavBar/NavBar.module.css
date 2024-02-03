@@ -1,0 +1,28 @@
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFF;
+  height: fit-content;
+  border-radius: var(--spacing-s);
+  padding: var(--spacing-xs) var(--spacing-s);
+}
+
+.nav-links a {
+  display: flex;
+  padding: var(--spacing-xs) var(--spacing-s);
+
+  border-radius: var(--border-radius-medium);
+  text-decoration: none;
+  color: inherit;
+  
+  &:last-child {
+    border: 1px solid #2A2A2A;
+  }
+}
+
+.nav-links {
+  composes: text from "../themesTypography.module.css";
+  display: inherit;
+  gap: var(--spacing-m);
+}

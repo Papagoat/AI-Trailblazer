@@ -1,21 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 18",
+  "sourceMap": true,
+
   "compilerOptions": {
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "module": "commonjs",
-    "target": "es5",
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "removeComments": true,
-    "allowSyntheticDefaultImports": true,
+    "lib": ["es2023", "dom"],
+    "module": "node16",
+    "target": "es2022",
     "jsx": "react",
     "baseUrl": "./",
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "downlevelIteration": true,
-    "paths": {
-      "components/*": ["src/components/*"]
-    }
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "moduleResolution": "node16"
   },
-  "include": ["./src"],
+  "include": ["src", "src/custom.d.ts"],
 }

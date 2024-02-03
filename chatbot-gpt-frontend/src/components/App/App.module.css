@@ -1,0 +1,9 @@
+@value gov-banner-height: 28px;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+  padding: 16px 20px 0px 20px;
+  min-height: calc(100dvh - gov-banner-height);
+}
