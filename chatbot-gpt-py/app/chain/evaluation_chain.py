@@ -1,15 +1,22 @@
-import json
 from operator import itemgetter
 from typing import Dict
 
 from langchain_community.llms import VertexAI
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableBranch, RunnableSequence
 from langchain.prompts import PromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 from app.enums.criteria_enums import CriteriaEnum
 from app.prompt_templates.eligibility_criteria_templates import CRITERIA_TEMPLATE, CLASSIFIER_TEMPLATE
 
+class Answer(BaseModel):
+    """
+    Typings for Evaluator output
+    """
+    criteria: str = Field(description="criteria")
+    reasoning: str = Field(description="detailed explanation")
+    value: str = Field(description="Y/N")
 
 class EvaluationChain():
     """This class evaluates the user's input"""
@@ -47,7 +54,6 @@ class EvaluationChain():
             2. Updates eligibility criteria dictionary based on the outcome in 1
             """
             res = evaluator.invoke(question)
-            res = json.loads(res)
 
             if res["value"] == "Y" and self.eligibility_dict[criteria] in [False, None]:
                 self.eligibility_dict[criteria] = True
@@ -94,6 +100,7 @@ class EvaluationChain():
         This method returns a dictionary of CRITERIA_NAME : CRITERIA_CHAIN
         """
         CRITERIA_PROMPT = PromptTemplate.from_template(CRITERIA_TEMPLATE)
+        parser = JsonOutputParser(pydantic_object=Answer)
         return {
             criteria.name: (
                 {
@@ -103,6 +110,6 @@ class EvaluationChain():
                 | CRITERIA_PROMPT
                 # pylint: disable-next=not-callable
                 | VertexAI(verbose=True)
-                | StrOutputParser()
+                | parser
             ) for criteria in CriteriaEnum
         }
