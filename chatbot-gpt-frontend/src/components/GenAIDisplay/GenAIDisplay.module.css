@@ -15,6 +15,11 @@
   div:nth-child(even) {
     align-self: flex-end;
   }
+
+  /* TODO: Hot fix to prevent loading animation from being squished when scroll container is visibly full */
+  span {
+    padding: 16px;
+  }
 }
 
 .proactive-interaction-wrapper {

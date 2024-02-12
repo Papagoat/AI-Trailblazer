@@ -16,11 +16,14 @@ export const GenAIDisplay = ({ className }: IProps) => {
   const displayContainerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLElement>(null);
   const interactionContainerRef = useRef<HTMLElement>(null);
-  
+
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // TODO: Implement Backend to retrieve prompt suggestions
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([
+    "I want to find out if I’m eligible for grants.",
+    "I want to know about grant application procedures and how long it might take.",
+    "I don’t know what I’m looking for yet.",
+  ]);
   const [displayHeight, setDisplayHeight] = useState<number>();
   const [messages, setMessages] = useState<{ text: string; sender: string }[]>([
     {
@@ -29,26 +32,21 @@ export const GenAIDisplay = ({ className }: IProps) => {
     },
   ]);
 
-  const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const message = {
-      text: input,
-      sender: "user",
-    };
-    setMessages([...messages, message]);
-    setIsLoading(true); // Start loading
-
+  const sendMessage = async (message: string) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/message`,
-        { message: input }
+        { message }
       );
+
+      const { answer, suggested_responses : suggestions } = response.data;
+
       const botMessage = {
-        text: response.data,
+        text: answer,
         sender: "bot",
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
+      setSuggestions(suggestions);
     } catch (error) {
       console.error("Error sending message:", error);
       const errorMessage = {
@@ -57,7 +55,35 @@ export const GenAIDisplay = ({ className }: IProps) => {
       };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     }
+  };
 
+  const sendSuggestedResponse = async (e: React.MouseEvent<HTMLElement>) => {
+    const text = (e.target as HTMLElement).innerText;
+
+    const message = {
+      text,
+      sender: "user",
+    };
+
+    setInput(text);
+    setMessages([...messages, message]);
+    setIsLoading(true); // Start loading
+    await sendMessage(text);
+    setIsLoading(false); // Stop loading
+    setInput("");
+  };
+
+  const sendMessageHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const message = {
+      text: input,
+      sender: "user",
+    };
+
+    setMessages([...messages, message]);
+    setIsLoading(true); // Start loading
+    await sendMessage(input);
     setIsLoading(false); // Stop loading
     setInput("");
   };
@@ -109,7 +135,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
             />
           );
         })}
-        {isLoading && <div className={styles["loader"]}></div>}
+        {isLoading && <span className={styles["loader"]}></span>}
       </ScrollContainer>
 
       <section
@@ -123,18 +149,20 @@ export const GenAIDisplay = ({ className }: IProps) => {
             below
           </p>
         </div>
-        {/* TODO: Update this section when prompt suggestion backend is implemented */}
-        {suggestions.map((m, index) => (
-          <span key={index} className={styles["prompt-suggestion"]}>
-            <p>{m}</p>
-            <>{"->"}</>
+        {suggestions.map((suggestion, index) => (
+          <span
+            key={index}
+            className={styles["prompt-suggestion"]}
+            onClick={sendSuggestedResponse}
+          >
+            <p>{suggestion}</p>
           </span>
         ))}
         <ChatBox
           input={input}
           inputHandler={(e) => setInput(e.target.value)}
           placeholder={"Reply in your own words..."}
-          sendMessageHandler={sendMessage}
+          sendMessageHandler={sendMessageHandler}
           disabled={isLoading}
         />
       </section>
