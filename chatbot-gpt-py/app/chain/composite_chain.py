@@ -1,13 +1,23 @@
+from typing import List
 from langchain.prompts import PromptTemplate
 from langchain.chat_models.vertexai import ChatVertexAI
 from langchain_core.runnables import RunnableParallel, RunnableSequence
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 from app.chain.evaluation_chain import EvaluationChain
 from app.enums.criteria_enums import CriteriaEnum
 from app.chain.singleton import SingletonMeta
 from app.prompt_templates.paraphrase_template import PARAPHRASE_TEMPLATE
 from app.chain.conversational_retrieval_chain import ConversationalRetrievalChain
+
+
+class Answer(BaseModel):
+    """
+    Typings for paraphrased chain output
+    """
+    answer: str = Field(description="answer")
+    suggested_responses: List[str] = Field(description="list of suggested user responses")
 
 
 class CompositeChain(metaclass=SingletonMeta):
@@ -41,6 +51,8 @@ class CompositeChain(metaclass=SingletonMeta):
         the grants.
         """
         PARAPHRASE_PROMPT = PromptTemplate.from_template(PARAPHRASE_TEMPLATE)
+        parser = JsonOutputParser(pydantic_object=Answer)
+
         chain = (
             RunnableParallel(
                 {
@@ -54,8 +66,7 @@ class CompositeChain(metaclass=SingletonMeta):
             | PARAPHRASE_PROMPT
             # pylint: disable-next=not-callable
             | ChatVertexAI(model_name="chat-bison-32k", temperature=0, verbose=True, max_output_tokens=8192)
-            # | VertexAI(verbose=True, max_tokens=2048)
-            | StrOutputParser()
+            | parser
         )
 
         return chain
