@@ -18,7 +18,7 @@ Using the paraphrased answer that you have come up with, curate a list of sugges
 
 Return a JSON object of both the paraphrased_answer as well as the suggested responses:
 {{
-  "paraphrased_answer": "{{paraphrased_answer}}",
+  "answer": "{{paraphrased_answer}}",
   "suggested_responses": ["response 1", "response 2", "response 3"]
 }}
 """

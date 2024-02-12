@@ -16,7 +16,7 @@ class Answer(BaseModel):
     """
     Typings for paraphrased chain output
     """
-    paraphrased_answer: str = Field(description="answer")
+    answer: str = Field(description="answer")
     suggested_responses: List[str] = Field(description="list of suggested user responses")
 
 
