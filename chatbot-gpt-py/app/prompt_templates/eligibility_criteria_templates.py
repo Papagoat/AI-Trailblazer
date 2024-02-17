@@ -7,12 +7,7 @@ DATA:
 ---------
 Question: {question}
 ---------
-Write out your explanation for each criterion detailing your thought process, then respond with a JSON output:
-{{
-  "criteria": {{criteria}}
-  "reasoning": "detailed explanation",
-  "value": "Y/N"
-}}
+{format_instructions}
 """
 
 CLASSIFIER_TEMPLATE = """
