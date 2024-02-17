@@ -3,12 +3,13 @@ from typing import Dict
 
 from langchain_community.llms import VertexAI
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
-from langchain_core.runnables import RunnablePassthrough, RunnableBranch, RunnableSequence
-from langchain.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough, RunnableBranch, RunnableSequence, RunnableParallel
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.prompts import PromptTemplate
 
 from app.enums.criteria_enums import CriteriaEnum
 from app.prompt_templates.eligibility_criteria_templates import CRITERIA_TEMPLATE, CLASSIFIER_TEMPLATE
+
 
 class Answer(BaseModel):
     """
@@ -17,6 +18,7 @@ class Answer(BaseModel):
     criteria: str = Field(description="criteria")
     reasoning: str = Field(description="detailed explanation")
     value: str = Field(description="Y/N")
+
 
 class EvaluationChain():
     """This class evaluates the user's input"""
@@ -57,7 +59,6 @@ class EvaluationChain():
 
             if res["value"] == "Y" and self.eligibility_dict[criteria] in [False, None]:
                 self.eligibility_dict[criteria] = True
-
             return res
 
         branch = RunnableBranch(
@@ -70,8 +71,14 @@ class EvaluationChain():
             ],
             lambda x: None
         )
-        eval_chain = {"criteria": classifier_chain,
-                      "question": lambda x: x["question"]} | branch
+        eval_chain = (
+            RunnableParallel({
+                "criteria": classifier_chain,
+                "question": lambda x: x["question"]
+            })
+            | branch
+        )
+
         return eval_chain
 
     def get_classifier_chain(self) -> RunnableSequence:
@@ -99,8 +106,11 @@ class EvaluationChain():
         """
         This method returns a dictionary of CRITERIA_NAME : CRITERIA_CHAIN
         """
-        CRITERIA_PROMPT = PromptTemplate.from_template(CRITERIA_TEMPLATE)
         parser = JsonOutputParser(pydantic_object=Answer)
+        CRITERIA_PROMPT = PromptTemplate.from_template(
+            CRITERIA_TEMPLATE, partial_variables={
+                "format_instructions": parser.get_format_instructions()}
+        )
         return {
             criteria.name: (
                 {
