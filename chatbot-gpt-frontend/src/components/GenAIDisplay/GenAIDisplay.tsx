@@ -1,12 +1,18 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
-import axios from "axios";
+import React, {
+  FormEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import styles from "./GenAIDisplay.module.css";
-import { AIMessage } from "../AIMessage/AIMessage";
-import { HumanMessage } from "../HumanMessage/HumanMessage";
-import { StarsImage } from "src/assets";
-import { ChatBox } from "../ChatBox/ChatBox";
-import { ScrollContainer } from "../ScrollContainer/ScrollContainer";
+import { AIMessage } from "src/components/AIMessage/AIMessage";
+import { HumanMessage } from "src/components/HumanMessage/HumanMessage";
+import { DaisyLogoImage, StarsImage } from "src/assets";
+import { ChatBox } from "src/components/ChatBox/ChatBox";
+import { ScrollContainer } from "src/components/ScrollContainer/ScrollContainer";
+import { AppContext } from "src/components/AppContext/AppContext";
 
 interface IProps {
   className: string;
@@ -15,47 +21,15 @@ interface IProps {
 export const GenAIDisplay = ({ className }: IProps) => {
   const displayContainerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLElement>(null);
-  const interactionContainerRef = useRef<HTMLElement>(null);
+  const suggestionContainerRef = useRef<HTMLElement>(null);
+  const lastAIMessageRef = useRef<HTMLDivElement>(null);
+  const lastHumanMessageRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [input, setInput] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [suggestions, setSuggestions] = useState<string[]>([
-    "I want to find out if I’m eligible for grants.",
-    "I want to know about grant application procedures and how long it might take.",
-    "I don’t know what I’m looking for yet.",
-  ]);
   const [displayHeight, setDisplayHeight] = useState<number>();
-  const [messages, setMessages] = useState<{ text: string; sender: string }[]>([
-    {
-      sender: "bot",
-      text: "Hello, I’m Daisy. I’ll be helping you figure out your care support options from the government.\n\nIs there a specific type of support you are looking for? Ask me in your own words or pick a suggestion.",
-    },
-  ]);
-
-  const sendMessage = async (message: string) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/message`,
-        { message }
-      );
-
-      const { answer, suggested_responses : suggestions } = response.data;
-
-      const botMessage = {
-        text: answer,
-        sender: "bot",
-      };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      setSuggestions(suggestions);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      const errorMessage = {
-        text: "Error occurred while sending message.",
-        sender: "bot",
-      };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
-    }
-  };
+  const { messages, suggestions, isLoading, setMessages, sendMessage } =
+    useContext(AppContext);
 
   const sendSuggestedResponse = async (e: React.MouseEvent<HTMLElement>) => {
     const text = (e.target as HTMLElement).innerText;
@@ -67,9 +41,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
 
     setInput(text);
     setMessages([...messages, message]);
-    setIsLoading(true); // Start loading
     await sendMessage(text);
-    setIsLoading(false); // Stop loading
     setInput("");
   };
 
@@ -82,38 +54,65 @@ export const GenAIDisplay = ({ className }: IProps) => {
     };
 
     setMessages([...messages, message]);
-    setIsLoading(true); // Start loading
     await sendMessage(input);
-    setIsLoading(false); // Stop loading
     setInput("");
   };
 
+  // TODO: Might want to move into AppContext and implement the same height
+  // for both GrantEligibilityDisplay / GenAIDisplay
   useEffect(() => {
-    const displayContainerHeight = displayContainerRef.current?.clientHeight;
-    setDisplayHeight(displayContainerHeight);
-  }, []);
-
-  useEffect(() => {
-    if (
-      scrollContainerRef.current &&
-      interactionContainerRef.current &&
-      displayHeight
-    ) {
-      const scrollContainerHeight = scrollContainerRef.current.offsetHeight;
-      const interactionContainerHeight =
-        interactionContainerRef.current.clientHeight;
-      const availableSpace = displayHeight - interactionContainerHeight;
-
-      if (scrollContainerHeight > availableSpace) {
-        scrollContainerRef.current.style.height = `${availableSpace}px`;
-      }
-
-      scrollContainerRef.current.scrollTo({
-        top: scrollContainerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (displayContainerRef.current) {
+      const displayContainerHeight = displayContainerRef.current.clientHeight;
+      setDisplayHeight(displayContainerHeight);
     }
-  }, [messages, displayHeight, scrollContainerRef, interactionContainerRef]);
+  }, [displayHeight]);
+
+  useEffect(() => {
+    const ELEMENT_GAP = 16;
+    if (isLoading) {
+      const loader = document.getElementById("loader");
+      if (
+        scrollContainerRef.current &&
+        suggestionContainerRef.current &&
+        lastHumanMessageRef.current &&
+        messagesEndRef.current &&
+        loader
+      ) {
+        const scrollContainerHeight =
+          lastHumanMessageRef.current.clientHeight +
+          loader.clientHeight +
+          5 * ELEMENT_GAP;
+
+        scrollContainerRef.current.style.height = `${scrollContainerHeight}px`;
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      if (
+        scrollContainerRef.current &&
+        suggestionContainerRef.current &&
+        lastAIMessageRef.current &&
+        messagesEndRef.current &&
+        displayHeight
+      ) {
+        const messages = scrollContainerRef.current.children;
+        if (messages.length < 3) {
+          return;
+        }
+        const lastHumanMessage = messages[messages.length - 3];
+        const scrollContainerHeight =
+          lastAIMessageRef.current.clientHeight +
+          lastHumanMessage.clientHeight +
+          5 * ELEMENT_GAP;
+        const availableSpace =
+          displayHeight - suggestionContainerRef.current.clientHeight;
+        scrollContainerRef.current.style.height = `${Math.min(
+          scrollContainerHeight,
+          availableSpace
+        )}px`;
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [isLoading, displayHeight]);
 
   return (
     <div
@@ -126,21 +125,39 @@ export const GenAIDisplay = ({ className }: IProps) => {
       >
         {messages.map((m, index) => {
           return m.sender === "user" ? (
-            <HumanMessage key={index} humanMessage={m.text} />
+            <HumanMessage
+              key={index}
+              humanMessage={m.text}
+              ref={
+                index === messages.length - 1 &&
+                messages[messages.length - 1].sender === "user"
+                  ? lastHumanMessageRef
+                  : undefined
+              }
+            />
           ) : (
             <AIMessage
               key={index}
               isLatest={index === messages.length - 1 ? true : false}
               aiMessage={m.text}
+              ref={
+                index === messages.length - 1 &&
+                messages[messages.length - 1].sender === "bot"
+                  ? lastAIMessageRef
+                  : undefined
+              }
             />
           );
         })}
-        {isLoading && <span className={styles["loader"]}></span>}
+        {isLoading && (
+          <DaisyLogoImage className={styles["loader"]} id={"loader"} />
+        )}
+        <div ref={messagesEndRef} />
       </ScrollContainer>
 
       <section
-        className={styles["proactive-interaction-wrapper"]}
-        ref={interactionContainerRef}
+        className={styles["suggestion-wrapper"]}
+        ref={suggestionContainerRef}
       >
         <div className={styles["nudge-section"]}>
           <StarsImage />
