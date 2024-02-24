@@ -7,9 +7,12 @@
   --spacing-xxs: 4px;
 
   /* header styles */
-  --h1-font: 32px;
-  --h2-font: 24px;
-  --h3-font: 20px;
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-p1: 18px;
+  --font-size-p2: 16px;
+  --font-size-small: 14px;
 
   /* body font-size styles */
   --body-font-large: 18px;
@@ -22,16 +25,73 @@
   --body-font-weight-regular: 400;
 
   /* border-radius styles */
-  --border-radius-small: 4px;
-  --border-radius-medium: 8px;
   --border-radius-large: 16px;
+  --border-radius-medium: 8px;
+  --border-radius-small: 4px;
 
   /** colors */
+  --color-primary-400: #944c05;
+  --color-primary-300: #c36b14;
+  --color-primary-200: #ff6600;
+  --color-primary-100: #e57e17;
+  --color-primary-30: #ffecd9;
+
+  --color-green-100: #103811;
+  --color-green-70: #c1edc2;
+
+  --color-blue-200: #001d47;
+  --color-blue-100: #003380;
+  --color-blue-70: #0056d6;
+  --color-blue-50: #c2d6f2;
+  --color-blue-30: #dae4f2;
+
+  --color-yellow-100: #ffd363;
+  --color-yellow-30: #fff7e1;
+
   --color-grey-100: #2a2a2a;
   --color-grey-70: #6a6a6a;
-  --color-green-100: #103811;
+  --color-grey-20: #f0f0f0;
+  --color-grey-10: #fafafa;
+  --color-grey-0: #ffffff;
 
-  --bg-user-input: #C1EDC2;
+  --color-neutral-1: #ede5dd;
+  --color-neutral-2: #f3efeb;
+
+  /* TODO: See if there is a way to dynamically grab the context tokens instead of hardcoding it here */
+  --bg-global-nav: var(--color-grey-0);
+  --bg-global-surface-primary: var(--color-grey-10);
+  --bg-global-gen-ai-primary: var(--color-neutral-2);
+  --bg-user-input: var(--color-green-70);
+
+  --bg-proactive-bg-color: var(--color-blue-30);
+  --bg-proactive-primary: var(--color-blue-70);
+  --bg-proactive-primary-hover: var(--color-blue-100);
+  --bg-proactive-primary-focus: var(--color-blue-200);
+  --bg-proactive-outline: var(--color-blue-70);
+  --bg-proactive-outline-hover: var(--color-blue-50);
+  --bg-proactive-outline-focus: var(--color-blue-70);
+
+  --bg-alert-heavy: var(--color-primary-200);
+  --bg-alert-light: var(--color-yellow-30);
+  --bg-alert-light-stroke: var(--color-yellow-100);
+
+  --bg-card-base: var(--color-neutral-1);
+  --bg-card-nested: var(--color-grey-0);
+  --bg-card-nested-separator: var(--color-neutral-2);
+  --bg-card-special: var(--color-primary-30);
+
+  --text-title: var(--color-grey-100);
+  --text-subtitle: var(--color-grey-100);
+  --text-header-accent: var(--color-primary-100);
+  --text-body: var(--color-grey-100);
+  --text-links: var(--color-blue-70);
+  --text-proactive-interaction: var(--color-blue-100);
+  --text-user-text: var(--color-green-100);
+  --text-small-texts: var(--color-grey-100);
+  --text-alert-heavy: var(--color-primary-200);
+  --text-button-primary: var(--color-grey-10);
+  --text-button-outline: var(--color-primary-100);
+  --text-button-ghost: var(--color-grey-100);
 }
 
 .text {
@@ -45,17 +105,17 @@
 
 .text-h1 {
   composes: text;
-  font-size: var(--h1-font);
+  font-size: var(--font-size-h1);
 }
 
 .text-h2 {
   composes: text;
-  font-size: var(--h2-font);
+  font-size: var(--font-size-h2);
 }
 
 .text-h3 {
   composes: text;
-  font-size: var(--h3-font);
+  font-size: var(--font-size-h3);
 }
 
 .body-regular-large {

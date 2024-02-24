@@ -1,0 +1,23 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.title {
+  composes: body-semibold-medium from "../../themesTypography.module.css";
+
+  padding: var(--spacing-xs) var(--spacing-s);
+  background: var(--bg-card-nested-separator);
+  color: var(--color-primary-100);
+  border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
+  line-height: 160%; /* 25.6px */
+  text-align: left;
+}
+
+.content {
+  text-align: left;
+  padding: var(--spacing-s);
+  border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
+  background: var(--bg-card-nested);
+}

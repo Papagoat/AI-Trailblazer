@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
 import styles from "./HumanMessage.module.css";
 
@@ -6,10 +6,12 @@ interface IProps {
   humanMessage: string;
 }
 
-export const HumanMessage = ({ humanMessage }: IProps) => {
-  return (
-    <div className={styles["wrapper"]}>
-      <p>{humanMessage}</p>
-    </div>
-  );
-};
+export const HumanMessage = forwardRef<HTMLDivElement, IProps>(
+  ({ humanMessage }, ref) => {
+    return (
+      <div className={styles["wrapper"]} ref={ref}>
+        <p>{humanMessage}</p>
+      </div>
+    );
+  }
+);
