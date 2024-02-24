@@ -1,46 +1,5 @@
 .wrapper {
   grid-template-columns: 1fr;
-  padding: 40px 0;
-}
-
-.branding {
-  display: inherit;
-  gap: var(--spacing-l);
-}
-
-.title {
-  composes: body-semibold-large from "../themesTypography.module.css";
-  display: inherit;
-  line-height: 120%;
-  color: #fff;
-  gap: var(--spacing-m);
-}
-
-.description {
-  display: inherit;
+  overflow: auto;
   gap: var(--spacing-xs);
-  :first-child {
-    composes: text-h2 from "../themesTypography.module.css";
-    font-weight: var(--body-font-weight-bold);
-  }
-
-  :last-child {
-    composes: body-regular-medium from "../themesTypography.module.css";
-    font-weight: var(--body-font-weight-regular);
-  }
-}
-
-.wrapper > :not(.ellipses-group) {
-  /* Styles for elements that are not EllipsesGroupImage */
-  display: grid;
-  grid-area: 1 / 1 / 2 / 2;
-  justify-self: center;
-  align-self: center;
-  text-align: center;
-}
-
-.ellipses-group {
-  grid-area: 1 / 1 / 2 / 2;
-  justify-self: center;
-  align-self: center;
 }
