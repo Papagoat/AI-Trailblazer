@@ -1,0 +1,11 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--spacing-m);
+  gap: var(--spacing-m);
+
+  border-radius: var(--border-radius-large);
+  background: var(--bg-card-base);
+  height: fit-content;
+}
