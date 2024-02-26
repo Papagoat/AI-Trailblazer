@@ -27,16 +27,28 @@ Question: {question}
 Answer:
 """
 
-DESCRIPTIONS_TEMPLATE = """Try to provide a list of summarized points based on the following context:
+INFO_TEMPLATE = """Try to provide a list of summarized points based on the following context:
 {context}
 
 Question: {question}
 
 Follow these steps in your response:
-1. Identify the topic in the question.
-2. Together with the topic, consider the context and craft points.
-3. Return the your answer as a list of points describing said context.
-4. Ensure each list item is a self-containing point. Do not break a point into multiple list items.
+1. Evaluate if the question requires a response with information about specific grants that are either explicitly mentioned in the question, or you identify as relevant examples. 
+2. If no, skip to point 3. If yes, craft a response for each relevant grant you have identified by following these steps: 
+2a. [Grants] Identify the name of the grant, and set it as a topic. 
+2b. [Grants] For each of the following sub-topics, first set these sub-topics as the title. Then, consider the context and craft a description about it.
+2c. [Grants] About the grant
+2d. [Grants] Eligibility
+2e. [Grants] Expected benefits
+2f. [Grants] Application process
+
+3. Evaluate if the question requires a response with information about a general topics. Craft a response for each relevant topic you have identified by following these steps: 
+3a. Identify the main subject of each topic and set it as a topic. 
+3b. Consider the context, and craft a description about it. Each description should be self-contained, and should not be mentioned in another description point. Where relevant, include examples in this description
+
+Ensure each list item is a self-containing point. Do not break a point into multiple list items.
+
+Ensure that only fully valid JSON should be returned.
 
 {format_instructions}
 """
