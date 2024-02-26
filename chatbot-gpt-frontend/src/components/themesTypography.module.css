@@ -58,40 +58,40 @@
   --color-neutral-2: #f3efeb;
 
   /* TODO: See if there is a way to dynamically grab the context tokens instead of hardcoding it here */
-  --bg-global-nav: var(--color-grey-0);
-  --bg-global-surface-primary: var(--color-grey-10);
-  --bg-global-gen-ai-primary: var(--color-neutral-2);
-  --bg-user-input: var(--color-green-70);
+  --color-bg-global-nav: var(--color-grey-0);
+  --color-bg-global-surface-primary: var(--color-grey-10);
+  --color-bg-global-gen-ai-primary: var(--color-neutral-2);
+  --color-bg-user-input: var(--color-green-70);
 
-  --bg-proactive-bg-color: var(--color-blue-30);
-  --bg-proactive-primary: var(--color-blue-70);
-  --bg-proactive-primary-hover: var(--color-blue-100);
-  --bg-proactive-primary-focus: var(--color-blue-200);
-  --bg-proactive-outline: var(--color-blue-70);
-  --bg-proactive-outline-hover: var(--color-blue-50);
-  --bg-proactive-outline-focus: var(--color-blue-70);
+  --color-bg-proactive-bg-color: var(--color-blue-30);
+  --color-bg-proactive-primary: var(--color-blue-70);
+  --color-bg-proactive-primary-hover: var(--color-blue-100);
+  --color-bg-proactive-primary-focus: var(--color-blue-200);
+  --color-bg-proactive-outline: var(--color-blue-70);
+  --color-bg-proactive-outline-hover: var(--color-blue-50);
+  --color-bg-proactive-outline-focus: var(--color-blue-70);
 
-  --bg-alert-heavy: var(--color-primary-200);
-  --bg-alert-light: var(--color-yellow-30);
-  --bg-alert-light-stroke: var(--color-yellow-100);
+  --color-bg-alert-heavy: var(--color-primary-200);
+  --color-bg-alert-light: var(--color-yellow-30);
+  --color-bg-alert-light-stroke: var(--color-yellow-100);
 
-  --bg-card-base: var(--color-neutral-1);
-  --bg-card-nested: var(--color-grey-0);
-  --bg-card-nested-separator: var(--color-neutral-2);
-  --bg-card-special: var(--color-primary-30);
+  --color-bg-card-base: var(--color-neutral-1);
+  --color-bg-card-nested: var(--color-grey-0);
+  --color-bg-card-nested-separator: var(--color-neutral-2);
+  --color-bg-card-special: var(--color-primary-30);
 
-  --text-title: var(--color-grey-100);
-  --text-subtitle: var(--color-grey-100);
-  --text-header-accent: var(--color-primary-100);
-  --text-body: var(--color-grey-100);
-  --text-links: var(--color-blue-70);
-  --text-proactive-interaction: var(--color-blue-100);
-  --text-user-text: var(--color-green-100);
-  --text-small-texts: var(--color-grey-100);
-  --text-alert-heavy: var(--color-primary-200);
-  --text-button-primary: var(--color-grey-10);
-  --text-button-outline: var(--color-primary-100);
-  --text-button-ghost: var(--color-grey-100);
+  --color-text-title: var(--color-grey-100);
+  --color-text-subtitle: var(--color-grey-100);
+  --color-text-header-accent: var(--color-primary-100);
+  --color-text-body: var(--color-grey-100);
+  --color-text-links: var(--color-blue-70);
+  --color-text-proactive-interaction: var(--color-blue-100);
+  --color-text-user-text: var(--color-green-100);
+  --color-text-small-texts: var(--color-grey-100);
+  --color-text-alert-heavy: var(--color-primary-200);
+  --color-text-button-primary: var(--color-grey-10);
+  --color-text-button-outline: var(--color-primary-100);
+  --color-text-button-ghost: var(--color-grey-100);
 }
 
 .text {

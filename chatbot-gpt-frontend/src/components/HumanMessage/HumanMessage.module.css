@@ -3,6 +3,6 @@
   padding: var(--spacing-xs) var(--spacing-s);
   height: fit-content;
   width: fit-content;
-  background: var(--bg-user-input);
+  background: var(--color-bg-user-input);
   border-radius: var(--border-radius-large);
 }

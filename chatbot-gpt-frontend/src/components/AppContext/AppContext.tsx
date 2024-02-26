@@ -5,8 +5,18 @@ interface IMessage {
   sender: string;
 }
 
+interface IInfoItem {
+  title: string;
+  content: string;
+}
+
+export interface IInformation {
+  topic: string;
+  details: IInfoItem[];
+}
+
 interface IAppContext {
-  descriptions: string[];
+  information: IInformation[];
   messages: IMessage[];
   isLoading: boolean;
   suggestions: string[];
@@ -15,7 +25,7 @@ interface IAppContext {
   setIsLoading: (isLoading: boolean) => void;
 }
 export const AppContext = createContext<IAppContext>({
-  descriptions: [],
+  information: [],
   messages: [],
   isLoading: false,
   suggestions: [],

@@ -60,12 +60,12 @@ class CompositeChain(metaclass=SingletonMeta):
                 })
             | {
                 "response": self.paraphrase_and_suggest_chain,
-                "descriptions": lambda x: x["conversational_chain"]["descriptions"] if "descriptions" in x["conversational_chain"] else []
+                "information": lambda x: x["conversational_chain"]["information"] if "information" in x["conversational_chain"] else []
             }
             | {
                 "answer": lambda x: x['response']["answer"],
                 "reply_options": lambda x: x['response']["reply_options"],
-                "descriptions": lambda x: x["descriptions"]
+                "information": lambda x: x["information"]
             }
         )
 

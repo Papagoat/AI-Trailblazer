@@ -6,6 +6,6 @@
   gap: var(--spacing-m);
 
   border-radius: var(--border-radius-large);
-  background: var(--bg-card-base);
+  background: var(--color-bg-card-base);
   height: fit-content;
 }

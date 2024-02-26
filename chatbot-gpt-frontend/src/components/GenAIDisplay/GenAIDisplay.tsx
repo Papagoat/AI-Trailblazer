@@ -68,7 +68,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
   }, [displayHeight]);
 
   useEffect(() => {
-    const ELEMENT_GAP = 16;
+    const ELEMENT_GAP = 32;
     if (isLoading) {
       const loader = document.getElementById("loader");
       if (
@@ -81,7 +81,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
         const scrollContainerHeight =
           lastHumanMessageRef.current.clientHeight +
           loader.clientHeight +
-          5 * ELEMENT_GAP;
+          3 * ELEMENT_GAP;
 
         scrollContainerRef.current.style.height = `${scrollContainerHeight}px`;
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -102,7 +102,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
         const scrollContainerHeight =
           lastAIMessageRef.current.clientHeight +
           lastHumanMessage.clientHeight +
-          5 * ELEMENT_GAP;
+          3 * ELEMENT_GAP;
         const availableSpace =
           displayHeight - suggestionContainerRef.current.clientHeight;
         scrollContainerRef.current.style.height = `${Math.min(
