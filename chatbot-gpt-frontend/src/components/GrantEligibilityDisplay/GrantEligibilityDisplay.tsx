@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 
 import styles from "./GrantEligibilityDisplay.module.css";
 
@@ -13,24 +13,17 @@ interface IProps {
 
 export const GrantEligibilityDisplay = ({ className }: IProps) => {
   const displayContainerRef = useRef<HTMLDivElement>(null);
-  const { descriptions } = useContext(AppContext);
-
-  const [displayHeight, setDisplayHeight] = useState<number>();
-  const [details, setDetails] = useState<string[]>([]);
+  const { information } = useContext(AppContext);
 
   useEffect(() => {
-    setDetails((prevDetails) => [...prevDetails, ...descriptions]);
-  }, [descriptions]);
-
-  // TODO: Might want to move into AppContext and implement the same height
-  // for both GrantEligibilityDisplay / GenAIDisplay
-  useEffect(() => {
-    const displayContainerHeight = displayContainerRef.current?.offsetHeight;
-    setDisplayHeight(displayContainerHeight);
-    if (displayContainerRef.current) {
-      displayContainerRef.current.style.height = `${displayHeight}px`;
+    const initialDisplayElement = document.getElementById("initial-display")
+    if (displayContainerRef.current && initialDisplayElement) {
+      const displayContainerHeight = displayContainerRef.current.offsetHeight;
+      displayContainerRef.current.style.height = `${displayContainerHeight}px`;
+      initialDisplayElement.style.height = `${displayContainerHeight}px`;
+      console.log(initialDisplayElement.clientHeight, displayContainerHeight)
     }
-  }, [displayHeight]);
+  },[] );
 
   return (
     <div
@@ -38,15 +31,21 @@ export const GrantEligibilityDisplay = ({ className }: IProps) => {
       ref={displayContainerRef}
     >
       <InitialDisplay />
-      {details.length > 0 && (
-        <>
-          {details.map((d, i) => (
-            <DetailPanel key={i}>
-              <DetailCard title={"Title of nested card"} content={d} />
+      {information.length > 0 &&
+        information.map((info, i) => (
+          <section key={i} className={styles["information-block"]}>
+            <p className={styles["title"]}>{info.topic}</p>
+            <DetailPanel>
+              {info.details.map((detail, j) => (
+                <DetailCard
+                  key={j}
+                  title={detail.title}
+                  content={detail.content}
+                />
+              ))}
             </DetailPanel>
-          ))}
-        </>
-      )}
+          </section>
+        ))}
     </div>
   );
 };

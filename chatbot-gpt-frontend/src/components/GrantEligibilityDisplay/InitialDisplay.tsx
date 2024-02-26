@@ -4,7 +4,7 @@ import styles from "./InitialDisplay.module.css";
 import { DaisyWordImage, EllipsesGroupImage } from "src/assets";
 
 export const InitialDisplay = () => (
-  <section className={styles["wrapper"]}>
+  <section className={styles["wrapper"]} id={"initial-display"}>
     <EllipsesGroupImage className={styles["ellipses-group"]} />
     <div className={styles["branding"]}>
       <section className={styles["title"]}>
