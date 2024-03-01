@@ -13,6 +13,7 @@ import { DaisyLogoImage, StarsImage } from "src/assets";
 import { ChatBox } from "src/components/ChatBox/ChatBox";
 import { ScrollContainer } from "src/components/ScrollContainer/ScrollContainer";
 import { AppContext } from "src/components/AppContext/AppContext";
+import { ReactComponent as RightArrowIcon } from "src/assets/right-arrow.svg";
 
 interface IProps {
   className: string;
@@ -24,7 +25,6 @@ export const GenAIDisplay = ({ className }: IProps) => {
   const suggestionContainerRef = useRef<HTMLElement>(null);
   const lastAIMessageRef = useRef<HTMLDivElement>(null);
   const lastHumanMessageRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [input, setInput] = useState<string>("");
   const [displayHeight, setDisplayHeight] = useState<number>();
@@ -33,14 +33,15 @@ export const GenAIDisplay = ({ className }: IProps) => {
 
   const sendSuggestedResponse = async (e: React.MouseEvent<HTMLElement>) => {
     const text = (e.target as HTMLElement).innerText;
-
     const message = {
       text,
       sender: "user",
+      topic: "",
     };
 
     setInput(text);
     setMessages([...messages, message]);
+
     await sendMessage(text);
     setInput("");
   };
@@ -51,6 +52,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
     const message = {
       text: input,
       sender: "user",
+      topic: "",
     };
 
     setMessages([...messages, message]);
@@ -65,54 +67,35 @@ export const GenAIDisplay = ({ className }: IProps) => {
       const displayContainerHeight = displayContainerRef.current.clientHeight;
       setDisplayHeight(displayContainerHeight);
     }
-  }, [displayHeight]);
+  }, []);
 
+  // Dynamically set scroll container height
   useEffect(() => {
-    const ELEMENT_GAP = 32;
-    if (isLoading) {
-      const loader = document.getElementById("loader");
-      if (
-        scrollContainerRef.current &&
-        suggestionContainerRef.current &&
-        lastHumanMessageRef.current &&
-        messagesEndRef.current &&
-        loader
-      ) {
-        const scrollContainerHeight =
-          lastHumanMessageRef.current.clientHeight +
-          loader.clientHeight +
-          3 * ELEMENT_GAP;
+    if (
+      suggestionContainerRef.current &&
+      scrollContainerRef.current &&
+      displayHeight
+    ) {
+      const scrollContainerHeight = scrollContainerRef.current.clientHeight;
+      const availableSpace =
+        displayHeight - suggestionContainerRef.current.clientHeight;
 
-        scrollContainerRef.current.style.height = `${scrollContainerHeight}px`;
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      if (scrollContainerHeight > availableSpace) {
+        scrollContainerRef.current.style.height = `${availableSpace}px`;
       }
-    } else {
-      if (
-        scrollContainerRef.current &&
-        suggestionContainerRef.current &&
-        lastAIMessageRef.current &&
-        messagesEndRef.current &&
-        displayHeight
-      ) {
-        const messages = scrollContainerRef.current.children;
-        if (messages.length < 3) {
-          return;
-        }
-        const lastHumanMessage = messages[messages.length - 3];
-        const scrollContainerHeight =
-          lastAIMessageRef.current.clientHeight +
-          lastHumanMessage.clientHeight +
-          3 * ELEMENT_GAP;
-        const availableSpace =
-          displayHeight - suggestionContainerRef.current.clientHeight;
-        scrollContainerRef.current.style.height = `${Math.min(
-          scrollContainerHeight,
-          availableSpace
-        )}px`;
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-      }
+
     }
-  }, [isLoading, displayHeight]);
+  }, [messages, displayHeight]);
+
+  // Scroll to bottom of scroll container
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   return (
     <div
@@ -152,7 +135,6 @@ export const GenAIDisplay = ({ className }: IProps) => {
         {isLoading && (
           <DaisyLogoImage className={styles["loader"]} id={"loader"} />
         )}
-        <div ref={messagesEndRef} />
       </ScrollContainer>
 
       <section
@@ -173,6 +155,7 @@ export const GenAIDisplay = ({ className }: IProps) => {
             onClick={sendSuggestedResponse}
           >
             <p>{suggestion}</p>
+            <RightArrowIcon className={styles["right-arrow-icon"]} />
           </span>
         ))}
         <ChatBox

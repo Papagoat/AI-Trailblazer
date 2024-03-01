@@ -15,19 +15,28 @@ from app.prompt_templates.main_templates import STANDALONE_TEMPLATE, ANSWER_TEMP
 from app.prompt_templates.system_template import SYSTEM_TEMPLATE
 from app.prompt_templates.fewshot_templates import FEWSHOT_ANSWER_EXAMPLES
 
-from app.utilities.debug import debug_fn
 
+class StandaloneQuestionOutput(BaseModel):
+    """Typings for standalone question output item"""
+    topic: str = Field(
+        description="This the main topic of the refined standalone question.")
+    standalone_question: str = Field(
+        description="This is the refined standalone question.")
 
 class InfoItem(BaseModel):
     """Typings for description item"""
-    content: str = Field(description="This is the content string for each description item.")
-    title: str = Field(description="This is the title associated with each description item. It summarizes the content string.")
+    content: str = Field(
+        description="This is the content string for each description item.")
+    title: str = Field(
+        description="This is the title associated with each description item. It summarizes the content string.")
+
 
 class InfoOutput(BaseModel):
     """Typings for descriptions chain output"""
-    topic: Optional[str] = Field(description="This is the main topic for the entire description output from the LLM.")
-    details: List[InfoItem] = Field(description="This is the list of InfoItems.")
-    explanation: str = Field(description="This is the explanation of your thought process in crafting the entire output. Be as thorough and detailed as you can be.")
+    details: List[InfoItem] = Field(
+        description="This is the list of InfoItems.")
+    explanation: str = Field(
+        description="This is the explanation of your thought process in crafting the entire output. Be as thorough and detailed as you can be.")
 
 
 class ConversationalRetrievalChain():
@@ -42,7 +51,7 @@ class ConversationalRetrievalChain():
         # https://cloud.google.com/vertex-ai/docs/generative-ai/learn/models
         # pylint: disable-next=not-callable
         self.model = ChatVertexAI(
-            model_name="chat-bison-32k", temperature=0, max_tokens=32768)
+            model_name="chat-bison-32k", temperature=0, max_output_tokens=8192)
         self.memory = get_memory_retriever()
         self.retriever = get_vector_search_retriever()
         self.chain = self.get_chain()
@@ -54,37 +63,30 @@ class ConversationalRetrievalChain():
             "chat_history": lambda x: self.memory.load_memory_variables({"human": x["question"]})["history"]
         })
 
-        retrieved_documents = {
-            "docs": itemgetter("standalone_question") | self.retriever,
-            "question": lambda x: x["standalone_question"],
-        }
+        retrieved_documents = RunnablePassthrough.assign(
+            docs=itemgetter("standalone_question") | self.retriever
+        )
 
         # get chains
         standalone_question_chain = self.get_standalone_question_chain()
         answer_chain = self.get_answer_chain()
         info_chain = self.get_info_chain()
 
-        updateMemory = RunnableParallel({
-            "answer": lambda x: x["answer"],
-            "information": lambda x: x["information"],
-            "_": lambda x: self.save_to_memory(x["question"], x["answer"]),
-        })
+        update_memory = RunnablePassthrough.assign(
+            _=lambda x: self.save_to_memory(x["question"], x["answer"]),
+        )
 
         final_chain = (
             loaded_memory
             | standalone_question_chain
             | retrieved_documents
             | RunnableParallel({
-                "question": lambda x: x["question"],
+                "question": lambda x: x["standalone_question"],
+                "topic": lambda x: x["topic"],
                 "answer": answer_chain,
                 "information": info_chain
             })
-            | {
-                "question": lambda x: x["question"],
-                "answer": lambda x: x["answer"],
-                "information": lambda x: x["information"]
-            }
-            | updateMemory
+            | update_memory
         )
 
         return final_chain
@@ -95,15 +97,16 @@ class ConversationalRetrievalChain():
 
     def get_standalone_question_chain(self) -> RunnableSequence:
         """This method returns the standalone question chain"""
+        standalone_question_parser = JsonOutputParser(
+            pydantic_object=StandaloneQuestionOutput)
         CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(
-            STANDALONE_TEMPLATE)
+            STANDALONE_TEMPLATE, partial_variables={"format_instructions": standalone_question_parser.get_format_instructions()})
 
-        standalone_question_chain = {
-            "standalone_question": RunnablePassthrough()
-            | CONDENSE_QUESTION_PROMPT
-            | self.model
-            | StrOutputParser()
-        }
+        standalone_question_chain = (RunnablePassthrough()
+                                     | CONDENSE_QUESTION_PROMPT
+                                     | self.model
+                                     | standalone_question_parser
+                                     )
 
         return standalone_question_chain
 
@@ -126,10 +129,12 @@ class ConversationalRetrievalChain():
 
         final_inputs = {
             "context": lambda x: combine_documents(x["docs"]),
-            "question": itemgetter("question"),
-            "examples": lambda x: FEWSHOT_ANSWER_PROMPT.format(human=x["question"]),
+            "topic": itemgetter('topic'),
+            "question": itemgetter("standalone_question"),
+            "examples": lambda x: FEWSHOT_ANSWER_PROMPT.format(human=x["standalone_question"]),
         }
 
+        # answer_chain = final_inputs | ANSWER_PROMPT | self.model | answer_parser | debug_fn
         answer_chain = final_inputs | ANSWER_PROMPT | self.model | StrOutputParser()
 
         return answer_chain
@@ -146,13 +151,12 @@ class ConversationalRetrievalChain():
         info_chain = (
             {
                 "context": lambda x: combine_documents(x["docs"]),
-                "question": lambda x: x["question"]
+                "topic": itemgetter("topic"),
+                "question": itemgetter("standalone_question")
             }
             | INFO_PROMPT
-            # | self.model
             | ChatVertexAI(model_name="chat-bison-32k", temperature=0, max_output_tokens=8192)
             | info_parser
-            | debug_fn
         )
 
         return info_chain
