@@ -1,8 +1,9 @@
 import { createContext } from "react";
 
-interface IMessage {
+export interface IMessage {
   text: string;
   sender: string;
+  topic: string;
 }
 
 interface IInfoItem {

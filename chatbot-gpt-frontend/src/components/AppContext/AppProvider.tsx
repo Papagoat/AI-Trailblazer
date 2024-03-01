@@ -4,7 +4,7 @@ import { filter, unionBy } from "lodash";
 import levenshtein from "fast-levenshtein";
 import { useState } from "react";
 
-import { AppContext, IInformation } from "./AppContext";
+import { AppContext, IInformation, IMessage } from "./AppContext";
 
 interface IAppProvider {
   children: React.ReactNode;
@@ -12,8 +12,9 @@ interface IAppProvider {
 
 export const AppProvider = ({ children }: IAppProvider) => {
   const [information, setInformation] = useState<IInformation[]>([]);
-  const [messages, setMessages] = useState<{ text: string; sender: string }[]>([
+  const [messages, setMessages] = useState<IMessage[]>([
     {
+      topic: "",
       sender: "bot",
       text: "Hello, I’m Daisy. I’ll be helping you figure out your care support options from the government.\n\nIs there a specific type of support you are looking for? Ask me in your own words or pick a suggestion.",
     },
@@ -35,15 +36,18 @@ export const AppProvider = ({ children }: IAppProvider) => {
 
       const {
         answer,
+        topic,
         reply_options: suggestions,
         information: newInformation,
       }: {
         answer: string;
         reply_options: string[];
         information: IInformation;
+        topic: string;
       } = response.data;
 
       const botMessage = {
+        topic,
         text: answer,
         sender: "bot",
       };
@@ -54,6 +58,8 @@ export const AppProvider = ({ children }: IAppProvider) => {
         setIsLoading(false);
         return
       }
+
+      newInformation["topic"] = topic
 
       const THRESHOLD = 20;
       const isSimilar = (a: string, b: string, threshold: number) => {
@@ -111,6 +117,7 @@ export const AppProvider = ({ children }: IAppProvider) => {
       const errorMessage = {
         text: "Error occurred while sending message.",
         sender: "bot",
+        topic: "Error"
       };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
       setIsLoading(false);
