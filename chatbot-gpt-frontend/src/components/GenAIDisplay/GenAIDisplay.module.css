@@ -8,6 +8,7 @@
 }
 
 .scroll-container {
+  flex-grow: 1;
   div:nth-child(odd) {
     align-self: flex-start;
   }
@@ -47,6 +48,21 @@
   border-radius: var(--border-radius-medium);
   border: 1px solid #0056d6;
   color: #003380;
+
+  &:hover {
+    background: var(--color-bg-proactive-outline-hover);
+  }
+
+  &:active {
+    background: var(--color-bg-proactive-primary);
+    color: var(--color-text-button-primary);
+
+    svg {
+      path {
+        fill: white;
+      }
+    }
+  }
 }
 
 .loader {
@@ -55,6 +71,12 @@
   -webkit-animation: spin 2s linear infinite;
   /* Safari */
   animation: spin 2s linear infinite;
+}
+
+.right-arrow-icon {
+  width: 16px;
+  height: 16px;
+  align-self: center;
 }
 
 /* Safari */
