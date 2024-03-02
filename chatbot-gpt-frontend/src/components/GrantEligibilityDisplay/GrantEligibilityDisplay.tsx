@@ -32,7 +32,6 @@ export const GrantEligibilityDisplay = ({ className }: IProps) => {
       const { topic } = messages[messages.length - 1];
       const topicId = topic.toLowerCase().replace(/\s+/g, "-");
       const element = document.getElementById(`gen-ai-${topicId}`);
-      console.log(element)
 
       if (element) {
         // Google Chrome not able to simultaneously scrollIntoView multiple

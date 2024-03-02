@@ -1,16 +1,16 @@
-from typing import List, Optional
+from typing import List
 from operator import itemgetter
 
 from langchain.chat_models.vertexai import ChatVertexAI
-from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts import ChatPromptTemplate, PromptTemplate, FewShotChatMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
-from langchain_core.output_parsers import StrOutputParser, CommaSeparatedListOutputParser, JsonOutputParser
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough, RunnableSequence
 
 
 from app.retriever.retriever import get_vector_search_retriever, get_memory_retriever
 from app.retriever.example_selector import get_fewshot_example_selector
-from app.helpers import combine_documents
+from app.helpers import combine_documents, handle_malformed_json
 from app.prompt_templates.main_templates import STANDALONE_TEMPLATE, ANSWER_TEMPLATE, INFO_TEMPLATE
 from app.prompt_templates.system_template import SYSTEM_TEMPLATE
 from app.prompt_templates.fewshot_templates import FEWSHOT_ANSWER_EXAMPLES
@@ -71,6 +71,7 @@ class ConversationalRetrievalChain():
         standalone_question_chain = self.get_standalone_question_chain()
         answer_chain = self.get_answer_chain()
         info_chain = self.get_info_chain()
+        self_correcting_info_chain = info_chain.with_fallbacks([self.get_info_chain()])
 
         update_memory = RunnablePassthrough.assign(
             _=lambda x: self.save_to_memory(x["question"], x["answer"]),
@@ -84,7 +85,7 @@ class ConversationalRetrievalChain():
                 "question": lambda x: x["standalone_question"],
                 "topic": lambda x: x["topic"],
                 "answer": answer_chain,
-                "information": info_chain
+                "information": self_correcting_info_chain
             })
             | update_memory
         )
@@ -142,7 +143,6 @@ class ConversationalRetrievalChain():
     def get_info_chain(self) -> RunnableSequence:
         """This method returns the information chain"""
 
-        # info_parser = CommaSeparatedListOutputParser()
         info_parser = JsonOutputParser(pydantic_object=InfoOutput)
         INFO_PROMPT = PromptTemplate.from_template(INFO_TEMPLATE, partial_variables={
             "format_instructions": info_parser.get_format_instructions()
@@ -156,6 +156,7 @@ class ConversationalRetrievalChain():
             }
             | INFO_PROMPT
             | ChatVertexAI(model_name="chat-bison-32k", temperature=0, max_output_tokens=8192)
+            | handle_malformed_json
             | info_parser
         )
 

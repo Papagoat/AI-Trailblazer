@@ -25,26 +25,6 @@ Question: {question}
 Answer: 
 """
 
-# COT implementation
-# ANSWER_TEMPLATE = """Try to answer the question based on the following context:
-# {context}
-
-# Question: {question}
-
-# Topic: {topic}
-
-# Examples: {examples}
-
-# Follow these steps in your response:
-# 1. Understanding the intent of the question.
-# 2. Use the examples a reference in helping you understanding the nature of the input question.
-# 3. These examples are only teaching you how to navigate a conversation around a specific topic. You should not replace the topic with the example topic.
-# 4. In addition, reference the topic when crafting your answer.
-# 3. Be precise and concise with your answer. Do not include half-finished sentences.
-
-# {format_instructions}
-# """
-
 INFO_TEMPLATE ="""Follow these steps to generate a response to the given topic and user question:
 Topic: {topic}
 Question: {question} 
