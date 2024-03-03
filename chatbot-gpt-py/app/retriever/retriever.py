@@ -1,10 +1,10 @@
 import os
 import faiss
 
-from langchain.embeddings import VertexAIEmbeddings
+from langchain_google_vertexai import VertexAIEmbeddings
 from langchain.vectorstores.matching_engine import MatchingEngine
-from langchain.docstore import InMemoryDocstore
-from langchain.vectorstores import FAISS
+from langchain_community.docstore import InMemoryDocstore
+from langchain_community.vectorstores import FAISS
 from langchain.memory import VectorStoreRetrieverMemory
 
 

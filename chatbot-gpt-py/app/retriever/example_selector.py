@@ -1,5 +1,5 @@
-from langchain.embeddings import VertexAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_google_vertexai import VertexAIEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.prompts import SemanticSimilarityExampleSelector
 
 def get_fewshot_example_selector(examples, k=2):

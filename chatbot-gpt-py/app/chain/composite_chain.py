@@ -1,7 +1,7 @@
 from typing import List
 
 from langchain.prompts import PromptTemplate
-from langchain.chat_models.vertexai import ChatVertexAI
+from langchain_google_vertexai import ChatVertexAI
 from langchain_core.runnables import RunnableParallel, RunnableSequence
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field

@@ -1,7 +1,7 @@
 from operator import itemgetter
 from typing import Dict
 
-from langchain_community.llms import VertexAI
+from langchain_google_vertexai import VertexAI
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableBranch, RunnableSequence, RunnableParallel
 from langchain_core.pydantic_v1 import BaseModel, Field
