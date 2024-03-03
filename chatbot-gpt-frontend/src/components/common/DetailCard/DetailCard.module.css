@@ -16,8 +16,17 @@
 }
 
 .content {
+  composes: body-regular-large from "../../themesTypography.module.css";
+  line-height: 160%; /* 25.6px */
+  color: var(--color-text-body);
   text-align: left;
   padding: var(--spacing-s);
   border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
   background: var(--color-bg-card-nested);
+
+  white-space: pre-line;
+
+  ul {
+    margin: 0;
+  }
 }
