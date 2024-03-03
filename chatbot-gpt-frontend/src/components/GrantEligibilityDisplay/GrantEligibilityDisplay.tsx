@@ -58,8 +58,8 @@ export const GrantEligibilityDisplay = ({ className }: IProps) => {
             className={styles["information-block"]}
             id={`gen-ai-${getTopicId(info.topic)}`}
           >
-            <p className={styles["title"]}>{info.topic}</p>
             <DetailPanel>
+              <p className={styles["title"]}>{info.topic}</p>
               {info.details.map((detail, j) => (
                 <DetailCard
                   key={j}
