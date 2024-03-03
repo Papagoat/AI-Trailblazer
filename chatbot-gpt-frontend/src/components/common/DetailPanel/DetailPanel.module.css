@@ -3,7 +3,7 @@
   flex-direction: column;
   width: 100%;
   padding: var(--spacing-m);
-  gap: var(--spacing-m);
+  gap: var(--spacing-s);
 
   border-radius: var(--border-radius-large);
   background: var(--color-bg-card-base);
