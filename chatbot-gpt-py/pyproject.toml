@@ -16,6 +16,7 @@ pylint = "^3.0.3"
 gunicorn = "^21.2.0"
 faiss-cpu = "^1.7.4"
 langchain-google-vertexai = "^0.1.0"
+langchain-google-genai = "^0.0.9"
 
 [build-system]
 requires = ["poetry-core"]

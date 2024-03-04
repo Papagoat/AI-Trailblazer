@@ -1,12 +1,11 @@
 from typing import List
 from operator import itemgetter
 
-from langchain_google_vertexai import ChatVertexAI
+from langchain_google_vertexai import ChatVertexAI, VertexAI
 from langchain.prompts import ChatPromptTemplate, PromptTemplate, FewShotChatMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough, RunnableSequence
-
 
 from app.retriever.retriever import get_vector_search_retriever, get_memory_retriever
 from app.retriever.example_selector import get_fewshot_example_selector
@@ -26,17 +25,17 @@ class StandaloneQuestionOutput(BaseModel):
 class InfoItem(BaseModel):
     """Typings for description item"""
     content: str = Field(
-        description="This is the content string for each description item.")
+        description="This is the content string for each InfoItem.")
     title: str = Field(
-        description="This is the title associated with each description item. It summarizes the content string.")
+        description="This is the title associated with each InfoItem. It summarizes the corresponding content string.")
 
 
 class InfoOutput(BaseModel):
     """Typings for descriptions chain output"""
     details: List[InfoItem] = Field(
         description="This is the list of InfoItems.")
-    explanation: str = Field(
-        description="This is the explanation of your thought process in crafting the entire output. Be as thorough and detailed as you can be.")
+    # explanation: str = Field(
+    #     description="This is the explanation of your thought process in crafting the entire output. Be as thorough and detailed as you can be.")
 
 
 class ConversationalRetrievalChain():
@@ -71,7 +70,6 @@ class ConversationalRetrievalChain():
         standalone_question_chain = self.get_standalone_question_chain()
         answer_chain = self.get_answer_chain()
         info_chain = self.get_info_chain()
-        self_correcting_info_chain = info_chain.with_fallbacks([self.get_info_chain()])
 
         update_memory = RunnablePassthrough.assign(
             _=lambda x: self.save_to_memory(x["question"], x["answer"]),
@@ -85,7 +83,7 @@ class ConversationalRetrievalChain():
                 "question": lambda x: x["standalone_question"],
                 "topic": lambda x: x["topic"],
                 "answer": answer_chain,
-                "information": self_correcting_info_chain
+                "information": info_chain
             })
             | update_memory
         )
