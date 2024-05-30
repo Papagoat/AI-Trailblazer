@@ -15,8 +15,8 @@ Original answer: {original_answer}
 6. Store the returned response in memory:
 {{paraphrased_response}}
 7. Analyse the final paraphrased response to identify potential areas where the user might want to find out more information, including key topics or examples mentioned. 
-8. Generate a minimum of 2 and maximum of 4 possible replies or questions from the perspective of the human, that they might might make to your paraphrased response. Ensure that each option is concise (<124 characters) and avoids derogatory language.
-9. Where relevant, provide options that allow the user to: Clarify or understand more about each specific topic or example mentioned in the paraphrased response, skip answering the question where necessary, engage in further discussion or seek additional information. 
+8. Generate a minimum of 2 and maximum of 4 possible reply options (ie. replies or questions) from the perspective of the human, that they might might make to your paraphrased response. Ensure that each option is concise (<124 characters) and avoids derogatory language.
+9. Where relevant, provide reply options that allow the user to: Clarify or understand more about each specific topic or example mentioned in the paraphrased response, skip answering the question where necessary, engage in further discussion or seek additional information. 
 10. Maintain coherence between the paraphrased response and the generated reply options to facilitate a smooth transition in the conversation.
 
 {format_instructions}

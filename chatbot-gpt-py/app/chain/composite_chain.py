@@ -11,6 +11,7 @@ from app.enums.criteria_enums import CriteriaEnum
 from app.chain.singleton import SingletonMeta
 from app.prompt_templates.paraphrase_and_suggest_template import PARAPHRASE_AND_SUGGEST_TEMPLATE
 from app.chain.conversational_retrieval_chain import ConversationalRetrievalChain
+from app.helpers import handle_malformed_json
 
 class ParaphraseAndSuggestOutput(BaseModel):
     """
@@ -88,6 +89,7 @@ class CompositeChain(metaclass=SingletonMeta):
             }
             | PARAPHRASE_AND_SUGGEST_PROMPT
             | ChatVertexAI(model_name="chat-bison-32k", temperature=0, verbose=True, max_output_tokens=8192)
+            | handle_malformed_json
             | parser
         )
 
