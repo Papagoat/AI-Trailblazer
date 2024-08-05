@@ -1,7 +1,8 @@
 ### ----- Build Stage -----
 FROM node:18.16-alpine as builder
 COPY package.json yarn.lock ./
-RUN yarn install --production
+# RUN yarn add -D @types/lodash
+RUN yarn install
 RUN mkdir /app
 RUN mv ./node_modules ./app
 WORKDIR /app
